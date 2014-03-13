@@ -1,0 +1,21 @@
+package main
+
+
+import (
+	"bufio"
+  	"fmt"
+  	"log"
+  	"os"
+)
+
+func readLines(path string) ([]string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	// pushes a function call onto a list.
+	defer file.close()
+
+	var lines []string
+	scanner := bufio.NewScanner(file)
+}

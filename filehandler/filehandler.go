@@ -15,6 +15,7 @@ func readLines(path string) ([]string, error) {
 		return nil, err
 	}
 	// pushes a function call onto a list.
+	// ensure file closes even if call to Open fails.
 	//defer file.close()
 
 	var lines []string

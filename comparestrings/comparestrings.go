@@ -4,27 +4,26 @@ import (
 	"fmt"
 )
 
-func strcmp(a, b string) int {
+func strcmp(a, b string) (diff int) {
 	var min = len(b)
 	if len(a) < len(b) {
 		min = len(a)
 	}
 
-	var diff int
 	for i := 0; i < min && diff == 0; i++ {
 		diff = int(a[i]) - int(b[i])
 	}
 	if diff == 0 {
 		diff = len(a) - len(b)
 	}
-	fmt.Println("diff is: %d", diff)
+
 	return diff
 }
 
 func main() {
-	var a string = "hej"
-	var b string = "hej"
+	var a string = "hejj"
+	var b string = "hejjj"
 
-	strcmp(a, b)
+	fmt.Println("The diff is: ", strcmp(a, b))
 
 }

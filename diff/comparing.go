@@ -5,16 +5,12 @@ import (
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
-func differenses(str, str2 string) string {
-
-	dmp := diffmatchpatch.Diff(str, str2)
-
-	return dmp
-}
-
 func main() {
-	var dstr string = "hello"
-	var str2 string = "hello"
+	var text1 string = "hejj"
+	var text2 string = "hej"
+	var dmp = diffmatchpatch.New()
 
-	fmt.Println(differenses(str, str2))
+	var diffs = dmp.DiffMain(text1, text2, false)
+
+	fmt.Println("%s", diffs)
 }

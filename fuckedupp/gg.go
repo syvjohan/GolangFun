@@ -19,9 +19,10 @@ func echoServer(ws *websocket.Conn) {
 		if str != "" {
 			differances(readfile("serverShadow.txt"), str)
 
-			result := readfile("resultClient.txt")
-			if result != "" {
-				bytes := []byte(result)
+			Shadow.shadow = readfile("resultClient.txt")
+
+			if Shadow.shadow != "" {
+				bytes := []byte(Document)
 				ws.Write(bytes)
 			}
 		}
@@ -51,8 +52,26 @@ func readfile(path string) string {
 	return text
 }
 
-func differances(text1, text2 string) {
-	// Check diffs
+func differances(shadow, text string) {
+	//Check diffs
+	dmp := diffmatchpatch.New()
+	diffs := dmp.DiffMain(shadow, text, false)
+	if len(diffs) == 1 {
+		// no diffs
+		return
+	}
+	dmp.DiffCleanupEfficiency(diffs)
+	// Make patch
+	patch := dmp.PatchMake(shadow, diffs)
+
+	fmt.Println(dmp.PatchToText(patch))
+	result := dmp.PatchToText(patch)
+
+	shadow = text
+
+	Shadow.shadowLocalVersion++
+
+	/*// Check diffs
 	dmp := diffmatchpatch.New()
 	diffs := dmp.DiffMain(text1, text2, false)
 	// Make patch
@@ -72,9 +91,21 @@ func differances(text1, text2 string) {
 	if err != nil {
 		panic(err)
 	}
+	*/
 }
 
 //<----------------------------------------------------------------------->
+
+type Shadow struct {
+	shadowLocalVersion  int
+	shadowRemoteVersion int
+	shadow              string
+}
+
+type Backup struct {
+	backup             string
+	backupLocalVersion int
+}
 
 func main() {
 	fmt.Println("Initialize server...")

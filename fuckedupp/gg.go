@@ -17,9 +17,9 @@ func echoServer(ws *websocket.Conn) {
 		str := string(buffer[:readData])
 
 		if str != "" {
-			differances(readfile("serverShadow.txt"), str)
+			differances(readfile("shadow.txt"), str)
 
-			Shadow.shadow = readfile("resultClient.txt")
+			Shadow.shadow = readfile("fileServer.txt")
 
 			if Shadow.shadow != "" {
 				bytes := []byte(Document)

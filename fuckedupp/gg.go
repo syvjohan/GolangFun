@@ -6,25 +6,22 @@ import (
 	"github.com/sergi/go-diff/diffmatchpatch"
 	"io/ioutil"
 	"net/http"
+	"Lib/checksum"
 )
 
 // Echo the data received on the WebSocket.
 func echoServer(ws *websocket.Conn) {
-
+clientShadow := shadow{shadowstring:"shadow"}
+clientBackup := backup{backupstring:"backup"}
 	for {
 		buffer := make([]byte, 512)
 		readData, _ := ws.Read(buffer)
 		str := string(buffer[:readData])
 
 		if str != "" {
-			differances(readfile("serverShadow.txt"), str)
+			differances(str, &clientBackup, &clientShadow)
 
-			Shadow.shadow = readfile("resultClient.txt")
-
-			if Shadow.shadow != "" {
-				bytes := []byte(Document)
-				ws.Write(bytes)
-			}
+			readfile("fileServer.txt")
 		}
 	}
 }
@@ -52,24 +49,25 @@ func readfile(path string) string {
 	return text
 }
 
-func differances(shadow, text string) {
+func differances(text string, clientBackup *backup, clientShadow *shadow) {
+	clientShadowLocalVersion := shadow{shadowLocalVersion: 0}
 	//Check diffs
 	dmp := diffmatchpatch.New()
-	diffs := dmp.DiffMain(shadow, text, false)
+	diffs := dmp.DiffMain(clientShadow.shadowstring, text, false)
 	if len(diffs) == 1 {
 		// no diffs
 		return
 	}
 	dmp.DiffCleanupEfficiency(diffs)
 	// Make patch
-	patch := dmp.PatchMake(shadow, diffs)
+	patch := dmp.PatchMake(clientShadow.shadowstring, diffs)
 
 	fmt.Println(dmp.PatchToText(patch))
 	result := dmp.PatchToText(patch)
 
-	shadow = text
+	clientShadow.shadowstring = text
 
-	Shadow.shadowLocalVersion++
+	clientShadowLocalVersion.shadowLocalVersion++
 
 	/*// Check diffs
 	dmp := diffmatchpatch.New()
@@ -91,20 +89,45 @@ func differances(shadow, text string) {
 	if err != nil {
 		panic(err)
 	}
-	*/
+	*/ 
 }
+
+func sendEdits() {
+
+}
+
+func sendAck() {
+
+}
+
+func handleEditMessage() {
+
+}
+
+func sendRequest() {
+	
+}
+
+//<-------------------------------------------------->
+
+
+
 
 //<----------------------------------------------------------------------->
 
-type Shadow struct {
+type shadow struct {
 	shadowLocalVersion  int
 	shadowRemoteVersion int
-	shadow              string
+	shadowstring        string
 }
 
-type Backup struct {
-	backup             string
+type backup struct {
+	backupstring           string
 	backupLocalVersion int
+}
+
+type Client struct {
+	client int
 }
 
 func main() {
